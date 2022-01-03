@@ -1,0 +1,13 @@
+[package]
+authors = ["rise0chen <rise0chen@163.com>"]
+description = "work on program will exit"
+edition = "2018"
+license-file = "LICENSE"
+name = "will_exit"
+readme = "./README.md"
+repository = "https://github.com/rise0chen/will_exit.git"
+version = "0.1.0"
+
+[dependencies]
+libc = "0.2"
+signal-hook-registry = "1"
