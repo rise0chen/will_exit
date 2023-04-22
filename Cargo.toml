@@ -6,8 +6,17 @@ license-file = "LICENSE"
 name = "will_exit"
 readme = "./README.md"
 repository = "https://github.com/rise0chen/will_exit.git"
-version = "0.1.1"
+version = "0.1.2"
+
+[features]
+async = ["event-listener"]
+default = []
 
 [dependencies]
+event-listener = {version = "2", optional = true}
 libc = "0.2"
 signal-hook-registry = "1"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

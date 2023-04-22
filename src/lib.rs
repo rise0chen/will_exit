@@ -4,10 +4,14 @@ use std::{io, process, thread};
 
 static INITED: AtomicBool = AtomicBool::new(false);
 static EXITING: AtomicBool = AtomicBool::new(false);
+#[cfg(feature = "async")]
+static EVENT: event_listener::Event = event_listener::Event::new();
 
 pub fn exit() {
     let result = EXITING.compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire);
     if result.is_ok() {
+        #[cfg(feature = "async")]
+        EVENT.notify(usize::MAX);
         thread::Builder::new()
             .name("will_exit".to_string())
             .spawn(|| {
@@ -19,6 +23,11 @@ pub fn exit() {
 }
 pub fn will_exit() -> bool {
     EXITING.load(Ordering::Acquire)
+}
+#[cfg(feature = "async")]
+#[cfg_attr(docsrs, doc(cfg(feature = "async")))]
+pub async fn wait_will_exit() {
+    EVENT.listen().await
 }
 
 pub fn init() -> Result<(), io::Error> {

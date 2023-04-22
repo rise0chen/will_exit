@@ -1,9 +1,12 @@
 use core::time::Duration;
 use std::thread;
-use will_exit;
 
 fn main() {
     will_exit::init().unwrap();
+    thread::spawn(|| {
+        thread::sleep(Duration::from_secs(6));
+        will_exit::exit();
+    });
     loop {
         if will_exit::will_exit() {
             break;
