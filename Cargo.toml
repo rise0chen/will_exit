@@ -6,7 +6,7 @@ license-file = "LICENSE"
 name = "will_exit"
 readme = "./README.md"
 repository = "https://github.com/rise0chen/will_exit.git"
-version = "0.1.2"
+version = "0.2.0"
 
 [features]
 async = ["event-listener"]

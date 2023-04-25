@@ -1,9 +1,10 @@
 use core::time::Duration;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU16, Ordering};
 use std::{io, process, thread};
 
 static INITED: AtomicBool = AtomicBool::new(false);
 static EXITING: AtomicBool = AtomicBool::new(false);
+static EXIT_TIME: AtomicU16 = AtomicU16::new(0);
 #[cfg(feature = "async")]
 static EVENT: event_listener::Event = event_listener::Event::new();
 
@@ -15,7 +16,8 @@ pub fn exit() {
         thread::Builder::new()
             .name("will_exit".to_string())
             .spawn(|| {
-                thread::sleep(Duration::from_secs(2));
+                let exit_time = EXIT_TIME.load(Ordering::SeqCst);
+                thread::sleep(Duration::from_millis(exit_time as u64));
                 process::exit(0);
             })
             .unwrap();
@@ -30,7 +32,9 @@ pub async fn wait_will_exit() {
     EVENT.listen().await
 }
 
-pub fn init() -> Result<(), io::Error> {
+/// 设置调用exit()后多少毫秒后退出程序
+pub fn init(exit_time: u16) -> Result<(), io::Error> {
+    EXIT_TIME.store(exit_time, Ordering::SeqCst);
     let result = INITED.compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire);
     if result.is_ok() {
         unsafe {
