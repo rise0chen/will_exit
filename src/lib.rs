@@ -41,11 +41,11 @@ pub fn init(exit_time: u16) -> Result<(), io::Error> {
     let result = INITED.compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire);
     if result.is_ok() {
         unsafe {
-            signal_hook_registry::register(libc::SIGINT, || exit(libc::SIGINT))?;
-            signal_hook_registry::register(libc::SIGTERM, || exit(libc::SIGTERM))?;
-            signal_hook_registry::register(libc::SIGABRT, || exit(libc::SIGABRT))?;
+            signal_hook_registry::register(libc::SIGINT, || send_exit_signal(libc::SIGINT))?;
+            signal_hook_registry::register(libc::SIGTERM, || send_exit_signal(libc::SIGTERM))?;
+            signal_hook_registry::register(libc::SIGABRT, || send_exit_signal(libc::SIGABRT))?;
             #[cfg(not(windows))]
-            signal_hook_registry::register(libc::SIGQUIT, || exit(libc::SIGQUIT))?;
+            signal_hook_registry::register(libc::SIGQUIT, || send_exit_signal(libc::SIGQUIT))?;
         }
     }
     Ok(())
