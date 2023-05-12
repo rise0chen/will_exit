@@ -1,4 +1,4 @@
-#[cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 use core::time::Duration;
 use std::sync::atomic::{AtomicBool, AtomicU16, Ordering};
